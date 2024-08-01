@@ -1,0 +1,171 @@
+.bookcontainer {
+    display: grid;
+    flex-wrap: wrap;
+    gap: 20px;
+    text-decoration: none;
+    grid-template-columns: repeat(3, 1fr);
+    margin: 0 auto;
+    text-align: center;
+}
+
+@media (min-width: 1600px) {
+    .bookcontainer {
+        grid-template-columns: repeat(3, 1fr);
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 700px) {
+    .bookcontainer {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
+
+.book {
+    flex: 0 1 calc(33.33% - 20px);
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    padding: 10px;
+}
+
+.booklink:hover {
+    text-decoration: none;
+}
+
+.booklist {
+    justify-content: center;
+}
+
+.bookdetails {
+    flex-grow: 1;
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.bookimage {
+    max-width: 250px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    text-decoration: none;
+}
+
+.bookimagesmall {
+    max-width: 250px;
+    height: 100px;
+    display: block;
+    margin: 0 auto;
+    text-decoration: none;
+}
+
+.booklink {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+}
+
+.booklink:hover {
+    color: #023368;
+}
+
+.wishlist-icon,
+.cart-icon {
+    position: relative;
+    display: inline-block;
+}
+
+
+.icon-container {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.book-details {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 700px;
+    margin: 0 auto;
+    margin-top: 30px;
+    margin-bottom: 50px;
+
+    .book-image {
+        flex: 0 0 33.33%;
+        box-sizing: border-box;
+        margin-right: 50px;
+    }
+
+    .book-info {
+        margin-top: 30px;
+        flex: 0 0 33.33%;
+        box-sizing: border-box;
+        margin-right: 50px;
+    }
+
+    .book-price {
+        flex: 0 0 33.33%;
+        box-sizing: border-box;
+        margin-right: 50px;
+    }
+}
+
+
+@media (max-width: 700px) {
+    .book-details {
+        max-width: 100%;
+
+        .book-image,
+        .book-info,
+        .book-price {
+            flex: 0 0 100%;
+            margin-right: 0;
+        }
+    }
+}
+
+.book-description {
+    margin-top: 30px;
+    text-align: left;
+    max-width: 800px;
+}
+
+#description {
+    text-align: justify;
+}
+
+.about {
+        margin: auto;
+        padding-left: 100px;
+        padding-right: 100px;
+}
+
+.about-text {
+    text-align: justify;
+}
+
+#booksPerPageForm {
+    text-align: center; 
+    margin-top: 20px; 
+}
+
+#booksPerPageForm label {
+    font-size: 16px; 
+    margin-right: 10px; 
+}
+
+#booksPerPageForm select {
+    padding: 8px; 
+    font-size: 14px; 
+    width: 5%;
+}
+
+#booksPerPageForm select {
+    border: 1px solid #ccc; 
+    border-radius: 4px; 
+}
+
+#booksPerPageForm option {
+    font-size: 14px; 
+}

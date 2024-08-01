@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load book_tags %}
+
+{% block title %}Search{% endblock %}
+
+{% block content %}
+
+<h1> Bookstore </h1>
+{% comment %} 
+{% include "book/filter.html" %} {% endcomment %}
+<br>
+{% if query %}
+
+<h4>Search results of "{{ query }}"</h4>
+<h5 style="text-align: center;">
+    {% with results.count as total_results %}
+
+    {% if total_results == 1 %}
+    Found {{ total_results }} item.
+    {% else %}
+    Found {{ total_results }} items.
+    {% endif %}
+
+    {% endwith %}
+</h5>
+<div class="bookcontainer">
+    {% for book in results %}
+    <div class="book">
+        <div class="bookdetails">
+            <a href="{{ book.get_absolute_url }}">
+                <img class="bookimage" src="{{ book.img_url }}" alt="Book image">
+                {{ book.title }}
+            </a>
+            <br>
+            {{ book.author }}
+            <br>
+            &#36;{{ book.price }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<p><a href="{% url 'book:book_search' %}">Search again</a></p>
+
+{% else %}
+
+<h4>Search for books by title</h4>
+<div id="review-form" class="form--group">
+<form class="form--review" method="get">
+    <div class="form--control">
+        {{ form.as_p }}
+    </div>
+   <p><input type="submit" class="btn btn-primary" value="Search"></p>
+</form>
+</div>
+
+{% endif %}
+
+{% endblock %}

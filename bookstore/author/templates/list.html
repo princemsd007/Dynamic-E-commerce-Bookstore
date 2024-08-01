@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Bookstore{% endblock %}
+
+{% block content %}
+
+<h1> Authors </h1>
+<div class="authors">
+    {% for author in all_authors %}
+    <div class="author-box">
+        <a class="author-link" href="{% url 'author:author_detail' author.slug %}">
+            {% if author.photo %}
+            <img class="author-photo" src="{{ author.photo.url }}" alt="Author Photo">
+            {% else %}
+            <img class="author-photo" src="{% static 'img/no-photos.png' %}" alt="No Photo">
+            {% endif %}
+        <p class="author-link">{{ author.name }} {{ author.surname }}</p></a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

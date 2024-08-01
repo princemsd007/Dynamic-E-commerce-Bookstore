@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Order no {{ order.id }} {% endblock %}
+
+{% block content %}
+
+<div>
+    <h3>Order no {{ order.id }} </h3>
+    <ul class="order-list">
+        <li>
+            <a href="#" onclick="window.print();">
+                Print order
+            </a>
+        </li>
+    </ul>
+    <table class="tables">
+        <tr>
+            <th>Created</th>
+            <td>{{ order.created }}</td>
+        </tr>
+        <tr>
+            <th>Name</th>
+            <td>{{ order.first_name }} {{ order.last_name }}</td>
+        </tr>
+        <tr>
+            <th>E-mail</th>
+            <td><a href="mailto: {{ order.email }}">{{ order.email }}</a></td>
+        </tr>
+        <tr>
+            <th>Address</th>
+            <td>
+                {{ order.shipping_address.street }} {{ order.shipping_address.apartment }},
+                {{ order.shipping_address.postal_code }} {{ order.shipping_address.city }},
+                {{ order.shipping_address.state }} {{ order.shipping_address.country }}
+            </td>
+        </tr>
+        <tr>
+            <th>Total</th>
+            <td>${{ order.get_total_cost|stringformat:".2f" }}</td>
+        </tr>
+        <tr>
+            <th>Payment Status</th>
+            <td> {% if order.order_status == 'canceled' and order.paid %}
+                refund initiated
+                {% endif %}
+                {% if order.order_status != 'canceled' and order.paid %} paid {% endif %}
+                {% if order.order_status == 'canceled' and order.paid == False %}
+                canceled
+                {% endif %}  
+                {% if order.order_status != 'canceled' and order.paid == False %}    
+                <form action="{% url 'payment:laterprocess' %}" method="post">
+                    <input type="hidden" name="order_id" value="{{ order.id }}">
+                    <button class="pay_now" type="submit"><i class="fa-regular fa-credit-card"> pay</i></button>
+                    {% csrf_token %}
+                </form>
+                {% endif %}
+                </td>
+        </tr>
+        <tr>
+            <th>Order Status</th>
+            <td>{{ order.order_status }}</td>            
+        </tr>
+    </table>
+</div>
+<br>
+
+{% if order.order_status == 'canceled' %}
+<p>Order has been canceled.</p>
+{% else %}
+<div class="cancel-order-form">
+    <form action="{% url 'orders:order_cancel' order.id  %}" method="post">
+        <input type="hidden" name="order_id" value="{{ order.id }}">
+        <button class="btn btn-danger" type="submit">Cancel order</button>
+        {% csrf_token %}
+    </form>
+</div>
+{% endif %}
+
+<br>
+<div>
+    <h3>Ordered books</h3>
+    <table class="tables">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th colspan="1"></th>
+                <th>Amount</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order.items.all %}
+            <tr>
+                <td>{{ item.book.title }}</td>
+                <td>{{ item.book.author }}</td>
+                <td colspan="1"></td>
+                <td>{{ item.quantity }}</td>
+                <td>${{ item.price|stringformat:".2f" }}</td>
+                <td>${{ item.get_cost|stringformat:".2f" }}</td>
+            </tr>
+            {% endfor %}
+            
+            {% if order.coupon %}
+            <tr>
+                <td>Subtotal</td>
+                <td colspan="4"></td>
+                <td>${{ order.get_total_cost_before_discount|floatformat:2 }}</td>
+            </tr>
+            <tr>
+                <td>
+                    Coupon "{{ order.coupon.code }}"
+                    ({{ order.coupon.discount }}% discount)
+                </td>
+                <td colspan="4"></td>
+                <td>
+                    - ${{ order.get_discount|floatformat:2 }}
+                </td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td><b>Total</b></td>
+                <td colspan="4"></td>
+                <td>${{ order.get_total_cost|stringformat:".2f" }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

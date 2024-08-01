@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{% endblock %}
+
+{% block content %}
+
+<h1> {{ author.name }} {{ author.surname }} </h1>
+
+{% if author.photo %}
+<p><img src="{{ author.photo.url }}" alt="Author Photo" width="250"></p>
+{% else %}
+    <p><img src="{% static 'img/no-photos.png' %}" alt="No Photo" width="150"></p>
+    <p style="font-size:12px;"><small>Photo credits: 
+        <a href="https://www.flaticon.com/free-icons/no-photo" title="no photo icons">No photo icons created by Those Icons - Flaticon</a>
+    </small>
+    </p>
+{% endif %}
+<p>Author's page: <a href="{{ author.own_url_page }}" target="_blank">{{ author.own_url_page }}</a></p>
+<p>Date of birth: {{ author.birthdate }}</p>
+<p>{{ author.bio }}</p>
+<br>
+<br>
+<h3>Books by this author</h3>
+<div class="bookcontainer">
+    {% for book in books %}
+    
+    <div class="book">
+        <div class="bookdetails">
+            <a class="booklink" href="{% url 'book:book_detail' book.slug %}">
+                <img class="bookimage" src="{{ book.img_url }}" alt="Book image">
+
+                {{ book.title|truncatechars:30 }}
+            </a>
+            <br>
+            {{ book.author|truncatechars:30 }}
+            <br>
+            &#36;{{ book.price }}
+        
+        </div>
+    </div>
+
+    {% empty %}
+    <p class="author-books-info"> Currently there are no books by this author in our store. </p>
+    {% endfor %}
+</div>
+{% endblock %}

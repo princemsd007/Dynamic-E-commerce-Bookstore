@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+
+<h3>Checkout</h3>
+<table class="tables">
+    <thead>
+        <tr>
+            <th>Photo</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Amount</th>
+            <th>Price</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in cart %}
+        {% with book=item.book %}
+        <tr>
+            <td>
+                <img class="bookimagesmall" src="{{ book.img_url }}" alt="Book image">
+            </td>
+            <td>{{ book.title }}</td>
+            <td>{{ book.author }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>${{ item.price }}</td>
+            <td>${{ item.total_price }}</td>
+        </tr>
+        {% endwith %}
+        {% endfor %}
+        {% if cart.coupon %}
+        <tr>
+            <td>Subtotal</td>
+            <td colspan="4"></td>
+            <td>${{ cart.calc_total_price|floatformat:2 }}</td>
+        </tr>
+        <tr>
+            <td>
+                Coupon "{{ cart.coupon.code }}"
+                ({{ cart.coupon.discount }}% discount)
+            </td>
+            <td colspan="4"></td>
+            <td>
+                - ${{ cart.get_discount|floatformat:2 }}
+            </td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td><b>Total</b></td>
+            <td colspan="4"></td>
+            <td>$<b>{{ cart.get_total_price_after_discount|floatformat:2 }}</b></td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<div class="order-info">
+    <h4>Order</h4>
+    <ul style="text-align:center; list-style: none;">
+        {% for item in cart %}
+        <li>
+            {{ item.quantity }}x <b>{{ item.book.title }} by {{ item.book.author }}</b>
+            <span>${{ item.total_price }}</span>
+        </li>
+        {% endfor %}
+   
+    {% if cart.coupon %}
+        <li>
+            Coupon "{{ cart.coupon.code }}"
+            ({{ cart.coupon.discount }}% discount)
+            <span> -$<b>{{ cart.get_discount|floatformat:2 }}</b></span>
+        </li>
+    {% endif %}
+</ul>
+    <p>Total: $<b>{{ cart.get_total_price_after_discount|floatformat:2 }}</b></p>
+</div>
+
+<div id="review-form" class="form--group">
+<form class="form--review" method="post">
+    <div class="form--control">
+    {{ form.as_p }}
+    </div>
+    <p><input type="submit" class="btn btn-primary" value="Submit order"></p>
+    {% csrf_token %}
+</form>
+</div>
+
+{% endblock %}

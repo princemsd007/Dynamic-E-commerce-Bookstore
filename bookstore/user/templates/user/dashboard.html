@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+
+<h3>Profile</h3>
+<div>
+    <p>
+        Welcome {{ request.user.first_name | default:request.user.username }}!
+    </p>
+    {% if profile.photo %}
+    <p><img src="{{ profile.photo.url }}" alt="User Photo" width="250"></p>
+    {% else %}
+    <p> <a href="{% url 'user:edit' %}"><img src="{% static 'img/no-photos.png' %}" alt="No Photo" width="150"></a></p>
+    <p style="font-size:12px;"><small>Photo credits: 
+        <a href="https://www.flaticon.com/free-icons/no-photo" title="no photo icons">No photo icons created by Those Icons - Flaticon</a>
+    </small>
+    </p>
+    <p>No photo available</p>
+    {% endif %}
+
+    {% if profile.date_of_birth is not None %}
+    <p><strong>Date of Birth:</strong> {{ profile.date_of_birth }}</p>
+        {% with age=profile.calculate_age.0 months=profile.calculate_age.1 days=profile.calculate_age.2 %}
+            <p>You are {{ age }} years, {{ months }} months and {{ days }} days old.</p>
+        {% endwith %}
+    {% endif %}
+
+    <p>You can <a href="{% url 'user:edit' %}">edit your profile</a> or <a href="{% url 'password_change' %}">change your password</a>.</p>
+    <div>
+        <p>
+        <h4>Orders</h4>
+        <table class="tables">
+            <thead>
+                <tr>
+                    <th>Created</th>
+                    <th>Order ID</th>
+                    <th>Payment Status</th>
+                    <th>Order Status</th>
+                    <th>Total</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+    
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.created }}</td>
+                    <td>{{ order.id }}</td>
+                    <td> {% if order.order_status == 'canceled' and order.paid %}
+                        refund initiated
+                        {% endif %}
+                        {% if order.order_status != 'canceled' and order.paid %} paid {% endif %}
+                        {% if order.order_status == 'canceled' and order.paid == False %}
+                        canceled
+                        {% endif %}  
+                        {% if order.order_status != 'canceled' and order.paid == False %}                     
+                        waiting for payment {% endif %}</td>
+                    <td>{{ order.order_status }}</td>
+                    <td>${{ order.get_total_cost|floatformat:2 }}</td>
+                    <td><a href="{% url 'orders:order_detail' order.id %}"><i class="fa-solid fa-circle-info"></i></a></td>
+                </tr>
+                {% endfor %}
+               
+            </tbody>
+        </table>
+        </p>
+    </div>
+    
+    {% include "pagination.html" with page=orders %}
+    <br>
+    <h4>Shipping addresses</h4>
+    {% if primary_addresses %}
+    <p><b>Primary Addresses</b></p>
+    <table class="tables">
+        <thead>
+            <tr>
+                <th>Street</th>
+                <th>Apartment</th>
+                <th>Postal Code</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Country</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for shipping_address in primary_addresses %}
+                    <tr>
+                        <td>{{ shipping_address.street }}</td>
+                        <td>{{ shipping_address.apartment }}</td>
+                        <td>{{ shipping_address.postal_code }}</td>
+                        <td>{{ shipping_address.city }}</td>
+                        <td>{{ shipping_address.state }}</td>
+                        <td>{{ shipping_address.country }}</td>
+                        <td><a class="btn btn-info" href="{% url 'user:edit_shipping_address' shipping_address.id %}">Edit</a></td>
+                        <td><a class="btn btn-danger" href="{% url 'user:delete_shipping_address' shipping_address.id %}">Delete</a></td>
+                    </tr>
+            {% endfor %}
+        </tbody>
+    </table> 
+    {% else %}
+    <p>No main address added yet.</p>
+    {% endif %}
+
+    {% if additional_addresses  %}
+    <p><b>Additional Addresses</b></p>
+    <table class="tables">
+        <thead>
+            <tr>
+                <th>Street</th>
+                <th>Apartment</th>
+                <th>Postal Code</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Country</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for shipping_address in additional_addresses %}
+                    <tr>
+                        <td>{{ shipping_address.street }}</td>
+                        <td>{{ shipping_address.apartment }}</td>
+                        <td>{{ shipping_address.postal_code }}</td>
+                        <td>{{ shipping_address.city }}</td>
+                        <td>{{ shipping_address.state }}</td>
+                        <td>{{ shipping_address.country }}</td>
+                        <td><a class="btn btn-info" href="{% url 'user:edit_shipping_address' shipping_address.id %}">Edit</a></td>
+                        <td><a class="btn btn-danger" href="{% url 'user:delete_shipping_address' shipping_address.id %}">Delete</a></td>
+                    </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No additional addresses added yet.</p>
+    {% endif %}
+    <br>
+    <br>
+    {% include "user/includes/add_shipping_address.html" %}
+</div>
+
+{% endblock %}

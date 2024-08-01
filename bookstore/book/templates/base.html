@@ -1,0 +1,144 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} {% endblock %}</title>
+    <link href="{% static 'css/main.css' %}" rel="stylesheet">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'img/site.webmanifest' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700&display=swap">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+</head>
+
+<body>
+    <nav>
+        <ul class="nav-bar">
+            <li><a {% if request.resolver_match.route == "/" %} class="selected" {% endif %} href="/"><i
+                        class="fa-solid fa-house"></i>Home</a></li>
+
+            <a href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fa-solid fa-folder"></i>Categories<i class="fa fa-caret-down"></i>
+            </a>
+
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a id="dropdown-item" class="dropdown-item" href="{% url 'book:all_categories' %}">All</a>
+                {% for category in categories %}
+                <a id="dropdown-item" class="dropdown-item" href="{% url 'book:category_display' category.catid %}">{{ category.cat_name }}</a>
+                {% endfor %}
+            </div>
+
+            <li>
+                {% with total_items=cart|length %}
+                {% if total_items > 0 %}
+                <a {% if request.resolver_match.route == "cart/" %} class="selected" {% endif %}
+                    href="{% url 'cart:cart_detail' %}"><i class="fas fa-shopping-cart"></i>
+                    Cart: {{ total_items }} item{{ total_items|pluralize }}, ${{ cart.calc_total_price }}
+                </a>
+                {% else %}
+                <a {% if request.resolver_match.route == "cart/" %} class="selected" {% endif %}
+                    href="{% url 'cart:cart_detail' %}"><i class="fas fa-shopping-cart"></i>Cart</a>
+                {% endif %}
+                {% endwith %}
+            </li>
+            <li><a {% if request.resolver_match.route == "search/" %} class="selected" {% endif %} href="/search"><i
+                        class="fa-solid fa-magnifying-glass"></i>Search</a></li>
+            
+            <li><a {% if request.resolver_match.route == "author/" %} class="selected" {% endif %} href="/author"><i class="fa-solid fa-at"></i>Authors</a></li>
+
+            {% if user.is_authenticated %}
+            <li><a {% if request.resolver_match.route == "wishlist/wishlist_view/" %} class="selected" {% endif %}
+                href="{% url 'wishlist:wishlist_view' %}"><i class="fa-solid fa-heart"></i>Wishlist</a></li>
+            <li><a {% if request.resolver_match.route == "user/dashboard/" %} class="selected" {% endif %}
+                    href="{% url 'user:dashboard' %}"><i class="fa-solid fa-user"></i>Profile</a></li>
+            <li><a {% if request.resolver_match.route == "user/logout/" %} class="selected" {% endif %}
+                    href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i>Logout</a></li>
+            {% else %}
+            <li><a {% if request.resolver_match.route == "user/login/" %} class="selected" {% endif %}
+                    href="{% url 'login' %}"><i class="fa-solid fa-right-to-bracket"></i>Login</a></li>
+            <li><a {% if request.resolver_match.route == "user/register/" %} class="selected" {% endif %}
+                    href="{% url 'user:register' %}"><i class="fa-solid fa-registered"></i>Register</a></li>
+            {% endif %}
+
+        </ul>
+    </nav>
+
+    {% if messages %}
+    <p>
+    <ul class="messages">
+        {% for message in messages %}
+        <li class="{{ message.tags }}" id="message-{{ forloop.counter }}">
+        <p>
+            {{ message|safe }}
+            <a href="#" class="close" onclick="closeMessage({{ forloop.counter }})">x</a>
+        </p>
+        </li>
+        {% endfor %}
+    </ul>
+    </p>
+    {% endif %}
+
+    <div id="content">
+        {% block content %} {% endblock %}
+    </div>
+
+    <footer>
+        <div>
+            <ul class="nav-bar">
+                <li><a href="{% url 'book:book_feed' %}"><i class="fa-solid fa-rss"></i>Subscribe to RSS feed</a></li>
+                <li><a {% if request.resolver_match.route == "other/about " %} class="selected" {% endif %}
+                    href="{% url 'book:about' %}"><i class="fa-solid fa-address-card"></i>About</a></li>
+                <li><a {% if request.resolver_match.route == "other/about " %} class="selected" {% endif %}
+                    href="{% url 'book:contact' %}"><i class="fa-solid fa-address-book"></i>Contact</a></li>
+                <li><a href="#top"><i class="fa-solid fa-arrow-up"></i>Go to Top</a></li>
+            </ul>
+        </div>
+        <br>
+        <p>Copyright &copy; 2024 Bookstore. All rights reserved.</p>
+
+        <div class="social-media">
+            <a href="https://github.com/Ewa-Anna/" class="icon-link">
+                <i class="fa-brands fa-github"></i>
+            </a>
+            <a href="https://www.facebook.com/" class="icon-link">
+                <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="https://twitter.com/" class="icon-link">
+                <i class="fab fa-twitter"></i>
+            </a>
+            <a href="https://www.instagram.com/flynnlyssa/" class="icon-link">
+                <i class="fab fa-instagram"></i>
+            </a>
+            <a href="https://www.linkedin.com/in/ewa-kucala/" class="icon-link">
+                <i class="fa-brands fa-linkedin"></i>
+            </a>
+        </div>
+
+    </footer>
+    
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script src="//cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" defer></script>
+
+    <script src="{% static 'js/closeMessages.js' %}" defer></script>        
+    <script src="{% static 'js/cart.js' %}" defer></script>
+    <script src="{% static 'js/wishlist.js' %}" defer></script>
+
+</body>
+
+</html>

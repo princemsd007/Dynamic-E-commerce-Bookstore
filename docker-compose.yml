@@ -1,0 +1,82 @@
+version: '3'
+
+services:
+
+  web:
+    build: .
+    env_file:
+      - .env
+    command: ./django-setup.sh
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+  db:
+    image: postgres    
+    environment:
+      POSTGRES_DB: bookstore
+      POSTGRES_USER: book
+      POSTGRES_PASSWORD: PASSWORD_POSTGRES
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+    container_name: postgres_db
+    ports:
+      - '5432:5432'
+    env_file:
+      - .env
+    command: ["docker-entrypoint.sh", "postgres"]
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    environment:
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+    volumes:
+      - redis_data:/data
+
+  rabbitmq:
+    image: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+
+  celery:
+    build:
+      context: .
+    command: bash -c "cd /code/bookstore/ && celery -A bookstore worker -l info -P gevent"
+    network_mode: host
+    environment:
+      - INVENIO_CELERY_BROKER_URL=amqp://guest:guest@mq:5672//
+      - rabbitmq_uri=amqp://127.0.0.1:5672
+    depends_on:
+      - rabbitmq
+
+  stripe:
+    build:
+      context: .
+    command: bash -c "cd /code/Stripe/stripe_1.18.0_windows_x86_64/ && stripe listen --forward-to localhost:8000/payment/webhook/"
+    volumes:
+      - ./stripe:/stripe 
+    ports:
+      - "8002:8002"
+    depends_on:
+      - web
+    environment:
+      - STRIPE_WEBHOOK_SECRET=endpoint_secret
+    env_file:
+      - .env
+
+volumes:
+  pgdata:
+  redis_data:

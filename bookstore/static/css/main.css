@@ -1,0 +1,220 @@
+@import url("book.css");
+@import url("forms.css");
+@import url("author.css");
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    
+}
+
+* :hover,
+*::before :hover,
+*::after :hover {
+    text-decoration: none;
+}
+
+a {
+    text-decoration: none;
+    color: #333;
+}
+
+body {
+    font-family: 'Lato', sans-serif;
+    text-decoration: none;
+    background-color: #f5f5f5;
+}
+
+
+.selected {
+    color: #ddd9d99f !important; 
+}
+
+
+h1 {
+    font-size: 30px;
+    color: #333;
+    margin: 10px 0;
+    text-align: center;
+    font-weight: bold;
+}
+
+h4, h3 {
+    text-align: center;
+    color: #333;
+    margin: 10px 0;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+nav {
+    background-color: #333;
+    color: #fff;
+    padding: 30px 0;
+    position: sticky;
+    top: 0px;
+    z-index: 1000;
+}
+
+.nav-bar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.nav-bar li {
+    display: inline;
+    margin: 0 15px;
+}
+
+.nav-bar a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.nav-bar a:hover {
+    color: #dacdcd;
+    text-decoration: none;
+
+}
+
+footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.icon-link {
+    display: inline-block;
+    margin: 0 10px;
+    text-decoration: none;
+    color: #fff;
+}
+
+.icon-link:hover {
+    color: #dacdcd;
+}
+
+#content {
+    text-align: justify;
+    padding: 20px;
+    border-radius: 5px;
+    max-width: 950px;
+    margin: auto;
+    justify-content: center;
+}
+
+p {
+    line-height: 1.6;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.tables {
+    width: 900px;
+    border-collapse: collapse;
+    margin: auto;
+    font-family: Arial, sans-serif;
+}
+
+.tables thead {
+    background-color: #333;
+    color: #fff;
+}
+
+.tables th {
+    padding: 12px;
+    text-align: center;
+    margin: 0;
+    border: none;
+}
+
+.tables tbody tr:nth-child(odd) {
+    background-color: #ddd9d9ee;
+}
+
+.tables td {
+    padding: 8px;
+    text-align: center;
+}
+  
+
+@media screen and (max-width: 600px) {
+    .tables th, td {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .tables {
+        max-width: 400px;
+    }
+}
+
+
+.tables td[colspan="3"] {
+    text-align: center;
+    background-color: #f2f2f2;
+    color: #666;
+    font-style: italic;
+}
+
+.button-form {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#dropdown-item {
+    background-color: #333;
+    color: #fff; 
+}
+
+#dropdown-item:hover {
+    background-color: #888484;
+    color: #fff; 
+}
+
+.order-list {
+    list-style: none;
+    text-align: center;
+}
+
+
+.messages {
+    padding: 10px;
+    margin: 0;
+}
+
+.messages.success {
+    color: green;
+    background: rgb(244, 255, 240);
+}
+
+.messages.info {
+    color: rgb(62, 179, 218);
+    background: rgb(240, 248, 255);
+}
+
+.messages.warning {
+    color: orange;
+    background: rgb(255, 248, 240);
+}
+
+.messages.error {
+    color: red;
+    background: rgb(255, 240, 240);
+}

@@ -1,0 +1,15 @@
+<h2 style="text-align: center;">Add new review</h2>
+<p>Posting review as {{ request.user.username }}</p>
+<div id="review-form" class="form--group">
+    <form class="form--review" action="{% url 'book:post_review' book.bookid %}" method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        {{ field.errors }}
+        <div class="form--control">
+            {{ field.label_tag }}
+            {{ field }}
+        </div>
+        {% endfor %}
+        <p><input type="submit" class="btn btn-primary" value="Add review"></p>
+    </form>
+</div>

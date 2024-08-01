@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Shipping Address{% endblock %}
+
+{% block content %}
+
+<h3>Edit Shipping Address</h3>
+<div id="review-form" class="form--group">
+    <form class="form--review" action="{% url 'user:edit_shipping_address' shipping_address.id %}" method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        {{ field.errors }}
+        {{ field.label_tag }}
+        <div class="form--control">
+            {{ field }}
+        </div>
+        {% endfor %}
+        <p><input type="submit" class="btn btn-primary" value="Update"></p>
+    </form>
+</div>
+
+{% endblock %}
